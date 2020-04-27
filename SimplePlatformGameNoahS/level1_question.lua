@@ -238,13 +238,13 @@ function scene:create( event )
     questionText = display.newText("", display.contentCenterX, display.contentCenterY*3/8, Arial, 75)
 
     -- create the answer text object & wrong answer text objects
-    answerText = display.newText("", X1, Y2, nil, 75)
+    answerText = display.newText("", X1, Y2, Arial, 75)
     answerText.anchorX = 0
-    wrongText1 = display.newText("", X2, Y2, nil, 75)
+    wrongText1 = display.newText("", X2, Y2, Arial, 75)
     wrongText1.anchorX = 0
-    wrongText2 = display.newText("", X1, Y1, nil, 75)
+    wrongText2 = display.newText("", X1, Y1, Arial, 75)
     wrongText2.anchorX = 0
-    wrongText3 = display.newText("", X2, Y1, nil, 75)
+    wrongText3 = display.newText("", X2, Y1, Arial, 75)
     wrongText3.anchorX = 0
 
     -----------------------------------------------------------------------------------------

@@ -164,6 +164,7 @@ end
 local function MakeSoccerBallsVisible()
     ball1.isVisible = true
     ball2.isVisible = true
+    ball3.isVisible = true
 
 end
 
@@ -217,20 +218,21 @@ local function onCollision( self, event )
                 heart1.isVisible = true
                 heart2.isVisible = false
                 heart3.isVisible = false
-                timer.performWithDelay(200, YouLoseTransition)
+                timer.performWithDelay(200, ReplaceCharacter)
 
             elseif (numLives == 0) then
                 --update hearts
                 heart1.isVisible = false
                 heart2.isVisible = false
                 heart3.isVisible = false
-
+                timer.performWithDelay(200, YouLoseTransition)
 
             end
         end
 
         if  (event.target.myName == "ball1") or
-            (event.target.myName == "ball2") then
+            (event.target.myName == "ball2") or 
+            (event.target.myName == "ball3") then
 
             -- get the ball that the user hit
             theBall = event.target
@@ -273,6 +275,8 @@ local function AddCollisionListeners()
     ball1:addEventListener( "collision" )
     ball2.collision = onCollision
     ball2:addEventListener( "collision" )
+    ball3.collision = onCollision
+    ball3:addEventListener( "collision" )
 
     door.collision = onCollision
     door:addEventListener( "collision" )
@@ -285,6 +289,7 @@ local function RemoveCollisionListeners()
 
     ball1:removeEventListener( "collision" )
     ball2:removeEventListener( "collision" )
+    ball3:removeEventListener( "collision" )
 
     door:removeEventListener( "collision")
 
@@ -311,6 +316,7 @@ local function AddPhysicsBodies()
 
     physics.addBody(ball1, "static",  {density=0, friction=0, bounce=0} )
     physics.addBody(ball2, "static",  {density=0, friction=0, bounce=0} )
+    physics.addBody(ball3, "static",  {density=0, friction=0, bounce=0} )
 
     physics.addBody(door, "static", {density=1, friction=0.3, bounce=0.2})
 
