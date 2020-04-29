@@ -95,6 +95,8 @@ local correctSoundChannel
 local backgroundMusic = audio.loadSound("Sounds/level1Music.wav")
 local backgroundMusicChannel
 
+local youWinSound = audio.loadSound("Sounds/youWinSound.wav")
+local youWinSoundChannel
 -----------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
 -----------------------------------------------------------------------------------------
@@ -192,6 +194,7 @@ local function RestartScene()
 
     elseif (numberCorrect == 3) then
         WinScreenTransition()
+        youWinSoundChannel = audio.play(youWinSound)
 
     else
 

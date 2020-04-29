@@ -566,8 +566,8 @@ function scene:create( event )
 
     --ball3
     ball3 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
-    ball3.x = 50
-    ball3.y = 725
+    ball3.x = 935
+    ball3.y = 135
     ball3.myName = "ball3"
     
     -- Insert objects into the scene group in order to ONLY be associated with this scene
