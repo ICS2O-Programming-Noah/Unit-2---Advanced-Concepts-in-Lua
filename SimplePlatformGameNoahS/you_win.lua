@@ -3,6 +3,9 @@
 -- SceneTemplate.lua
 -- Scene Template (Composer API)
 --
+-- Edited by: Noah Sabbagh
+-- Editied on: Apr. 28th, 2020
+-- 
 -----------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------
@@ -32,6 +35,15 @@ local scene = composer.newScene( sceneName )
 local bkg
 
 ----------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------
+-- SOUNDS
+-----------------------------------------------------------------------------------------
+
+-- add lose sound effect
+local winSound = audio.loadSound("Sounds/Cheer.m4a")
+local winSoundChannel
+
 -----------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
 -----------------------------------------------------------------------------------------
@@ -83,6 +95,10 @@ function scene:show( event )
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
+
+        -- play lose sound effect
+        winSoundChannel = audio.play(winSound)
+
     end
 
 end

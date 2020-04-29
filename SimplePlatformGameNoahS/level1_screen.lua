@@ -3,6 +3,8 @@
 -- level1_screen.lua
 -- Created by: Ms Raffin
 -- Date: Nov. 22nd, 2014
+-- Edited by: Noah Sabbagh
+-- Editied on: Apr. 28th, 2020
 -- Description: This is the level 1 screen of the game.
 -----------------------------------------------------------------------------------------
 
@@ -62,12 +64,12 @@ local uArrow
 local lArrow
 
 local motionx = 0
-local SPEED = 7
-local LINEAR_VELOCITY = -300
+local SPEED = 7.5
+local LINEAR_VELOCITY = -100
 local GRAVITY = 8
 
 local leftW 
-local rightWall
+local rightW
 local topW
 local floor
 
@@ -77,6 +79,13 @@ local ball3
 local theBall
 
 local questionsAnswered = 0
+
+-----------------------------------------------------------------------------------------
+-- SOUNDS
+-----------------------------------------------------------------------------------------
+
+local hittingSpikeSound = audio.loadSound("Sounds/Pop.mp3")
+local hittingSpikeSoundChannel
 
 -----------------------------------------------------------------------------------------
 -- LOCAL SCENE FUNCTIONS
@@ -115,15 +124,15 @@ end
 
 
 local function AddArrowEventListeners()
-    lArrow:addEventListener("touch", left)
     rArrow:addEventListener("touch", right)
     uArrow:addEventListener("touch", up)
+    lArrow:addEventListener("touch", left)
 end
 
 local function RemoveArrowEventListeners()
-    lArrow:removeEventListener("touch", left)
     rArrow:removeEventListener("touch", right)
     uArrow:removeEventListener("touch", up)
+    lArrow:removeEventListener("touch", left)
 end
 
 local function AddRuntimeListeners()
@@ -165,7 +174,6 @@ local function MakeSoccerBallsVisible()
     ball1.isVisible = true
     ball2.isVisible = true
     ball3.isVisible = true
-
 end
 
 local function MakeHeartsVisible()
@@ -188,13 +196,14 @@ local function onCollision( self, event )
     if ( event.phase == "began" ) then
 
         --Pop sound
-        popSoundChannel = audio.play(popSound)
+        -- hittingSpikeSoundChannel = audio.play(hittingSpikeSound)
 
         if  (event.target.myName == "spikes1") or 
             (event.target.myName == "spikes2") or
             (event.target.myName == "spikes3") then
 
             -- add sound effect here
+            hittingSpikeSoundChannel = audio.play(hittingSpikeSound)
 
             -- remove runtime listeners that move the character
             RemoveArrowEventListeners()
@@ -221,17 +230,16 @@ local function onCollision( self, event )
                 timer.performWithDelay(200, ReplaceCharacter)
 
             elseif (numLives == 0) then
-                --update hearts
+                -- update hearts
                 heart1.isVisible = false
                 heart2.isVisible = false
                 heart3.isVisible = false
                 timer.performWithDelay(200, YouLoseTransition)
-
             end
         end
 
         if  (event.target.myName == "ball1") or
-            (event.target.myName == "ball2") or 
+            (event.target.myName == "ball2") or
             (event.target.myName == "ball3") then
 
             -- get the ball that the user hit
@@ -251,9 +259,10 @@ local function onCollision( self, event )
         end
 
         if (event.target.myName == "door") then
-            --check to see if the user has answered 5 questions
+            --check to see if the user has answered 3 questions
             if (questionsAnswered == 3) then
                 -- after getting 3 questions right, go to the you win screen
+                composer.gotoScene( "you_win" )
             end
         end        
 
@@ -311,6 +320,7 @@ local function AddPhysicsBodies()
     physics.addBody( spikes3platform, "static", { density=1.0, friction=0.3, bounce=0.2 } )
 
     physics.addBody(leftW, "static", {density=1, friction=0.3, bounce=0.2} )
+    physics.addBody(rightW, "static", {density=1, friction=0.3, bounce=0.2} )
     physics.addBody(topW, "static", {density=1, friction=0.3, bounce=0.2} )
     physics.addBody(floor, "static", {density=1, friction=0.3, bounce=0.2} )
 
@@ -337,6 +347,7 @@ local function RemovePhysicsBodies()
     physics.removeBody(spikes3platform)
 
     physics.removeBody(leftW)
+    physics.removeBody(rightW)
     physics.removeBody(topW)
     physics.removeBody(floor)
  
@@ -481,6 +492,8 @@ function scene:create( event )
     heart3.y = 50
     heart3.isVisible = true
 
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( heart3 )
 
     --Insert the right arrow
     rArrow = display.newImageRect("Images/RightArrowUnpressed.png", 100, 50)
@@ -491,20 +504,20 @@ function scene:create( event )
     sceneGroup:insert( rArrow)
 
     --Insert the left arrow
-    lArrow = display.newImageRect("Images/LeftArrowUnpressed.png", 100, 50)
-    lArrow.x = display.contentWidth * 7.2 / 10
-    lArrow.y = display.contentHeight * 9.5 / 10
-   
-    -- Insert objects into the scene group in order to ONLY be associated with this scene
-    sceneGroup:insert( lArrow)
-
-    --Insert the up arrow
     uArrow = display.newImageRect("Images/UpArrowUnpressed.png", 50, 100)
     uArrow.x = display.contentWidth * 8.2 / 10
     uArrow.y = display.contentHeight * 8.5 / 10
 
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( uArrow)
+
+    --Insert the left arrow
+    lArrow = display.newImageRect("Images/LeftArrowUnpressed.png", 100, 50)
+    lArrow.x = display.contentWidth * 7.2 / 10
+    lArrow.y = display.contentHeight * 9.5 / 10
+       
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( lArrow)
 
     --WALLS--
     leftW = display.newLine( 0, 0, 0, display.contentHeight)
@@ -553,10 +566,10 @@ function scene:create( event )
 
     --ball3
     ball3 = display.newImageRect ("Images/SoccerBall.png", 70, 70)
-    ball3.x = 950
-    ball3.y = 130
+    ball3.x = 50
+    ball3.y = 725
     ball3.myName = "ball3"
-
+    
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( ball3 )
 
@@ -589,7 +602,7 @@ function scene:show( event )
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
 
-        numLives = 2
+        numLives = 3
         questionsAnswered = 0
 
         -- make all soccer balls visible
