@@ -1,9 +1,8 @@
 -----------------------------------------------------------------------------------------
---
 -- level1_screen.lua
 -- Created by: Gil Robern
--- Modified by: Your Name
--- Date: Month Day, Year
+-- Modified by: Noah Sabbagh
+-- Date: April 26, 2020
 -- Description: This is the level 1 screen of the game.
 -----------------------------------------------------------------------------------------
 
@@ -69,8 +68,9 @@ local livesText
 -- the text displaying congratulations
 local congratulationText 
 
--- Displays text that says correct.
+-- Displays text that says correct or incorrect.
 local correct 
+local incorrect
 
 -- Displays the level text of time text
 local level1Text 
@@ -83,20 +83,18 @@ local alreadyClickedAnswer = false
 -- SOUND
 -----------------------------------------------------------------------------------------
 
---You Win sound
---local youWinSound = audio.loadSound("Sounds/(name of sound)")
---local youWinSoundChannel
+-- load a wrong answer sound
+local wrongSound = audio.loadSound("Sounds/WrongBuzzer.mp3")
+local wrongSoundChannel
 
--- You lose sound
---local youLoseSound = audio.loadSound("Sounds/(name of sound)")
---local youLoseSoundChannel
+-- load a correct answer sound
+local correctSound = audio.loadSound("Sounds/CorrectAnswer.mp3")
+local correctSoundChannel
 
--- Correct Sound
---local correctSound = audio.loadSound("Sounds/(name of sound)")
---local correctSoundChannel
+-- load background music
+local backgroundMusic = audio.loadSound("Sounds/level1Music.wav")
+local backgroundMusicChannel
 
---Incorrect Sound
---local incorrectSound = audio.loadSound("Sounds/(name of Sound)")
 -----------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
 -----------------------------------------------------------------------------------------
@@ -104,16 +102,15 @@ local alreadyClickedAnswer = false
 local function DetermineAnswers()
     -- calculate the correct answer as well as the wrong answers
     answer = firstNumber + secondNumber
-    wrongAnswer1 = answer + math.random(1,4)
-    wrongAnswer2 = answer + math.random(5,8)
-    wrongAnswer3 = answer + math.random(9,12)
+    wrongAnswer1 = answer + math.random(1,2)
+    wrongAnswer2 = answer + math.random(3,4)
+    wrongAnswer3 = answer + math.random(5,6)
 end
 
 -- Function that changes the answers for a new question and places them randomly in one of the positions
 local function DisplayAnswers( )
 
     local answerPosition = math.random(1,4)
-    
     answerTextObject.text = tostring( answer )
     wrongAnswer1TextObject.text = tostring( wrongAnswer1 )
     wrongAnswer2TextObject.text = tostring( wrongAnswer2 )
@@ -121,29 +118,29 @@ local function DisplayAnswers( )
 
     if (answerPosition == 1) then                
         
-        answerTextObject.x = display.contentWidth*.3        
+        answerTextObject.x = display.contentWidth*.1        
         wrongAnswer1TextObject.x = display.contentWidth*.2
-        wrongAnswer2TextObject.x = display.contentWidth*.1 
+        wrongAnswer2TextObject.x = display.contentWidth*.3 
         wrongAnswer3TextObject.x = display.contentWidth*.4
 
     elseif (answerPosition == 2) then
        
-        answerTextObject.x = display.contentWidth*.4       
-        wrongAnswer1TextObject.x = display.contentWidth*.1
-        wrongAnswer2TextObject.x = display.contentWidth*.3 
-        wrongAnswer3TextObject.x = display.contentWidth*.2
-
-    elseif (answerPosition == 3) then
-
         answerTextObject.x = display.contentWidth*.2        
         wrongAnswer1TextObject.x = display.contentWidth*.3
-        wrongAnswer2TextObject.x = display.contentWidth*.4
+        wrongAnswer2TextObject.x = display.contentWidth*.4 
         wrongAnswer3TextObject.x = display.contentWidth*.1
 
-    else
-
-        answerTextObject.x = display.contentWidth*.1
+    elseif (answerPosition == 3) then
+       
+        answerTextObject.x = display.contentWidth*.3        
         wrongAnswer1TextObject.x = display.contentWidth*.4
+        wrongAnswer2TextObject.x = display.contentWidth*.1
+        wrongAnswer3TextObject.x = display.contentWidth*.2
+
+    elseif (answerPosition == 4) then
+       
+        answerTextObject.x = display.contentWidth*.4        
+        wrongAnswer1TextObject.x = display.contentWidth*.1
         wrongAnswer2TextObject.x = display.contentWidth*.2
         wrongAnswer3TextObject.x = display.contentWidth*.3
 
@@ -153,13 +150,13 @@ end
 
 -- Function that transitions to Lose Screen
 local function LoseScreenTransition( )        
-    composer.gotoScene( "you_lose", {effect = "zoomInOutFade", time = 1000})
+    composer.gotoScene( "you_lose", {effect = "slideLeft", time = 1000})
 end 
 
 -- Function that transitions to Win Screen
-local function WinScreenTransition( )
-    composer.gotoScene( "you_win", {effect = "zoomInOutFade", time = 1000})
-end
+local function WinScreenTransition( )        
+    composer.gotoScene( "you_win", {effect = "flip", time = 1000})
+end 
 
 -- The function that displays the equation and determines the answer and the wrong answers
 local function DisplayAddEquation()
@@ -184,19 +181,24 @@ local function RestartScene()
 
     alreadyClickedAnswer = false
     correct.isVisible = false
+    incorrect.isVisible = false
 
     livesText.text = "Number of lives = " .. tostring(lives)
     numberCorrectText.text = "Number correct = " .. tostring(numberCorrect)
 
     -- if they have 0 lives, go to the You Lose screen
     if (lives == 0) then
-        LoseScreenTransition ()
-    
+        LoseScreenTransition()
+
     elseif (numberCorrect == 3) then
-        WinScreenTransition
-        --DisplayAddEquation()
-        --DetermineAnswers()
-        --DisplayAnswers()
+        WinScreenTransition()
+
+    else
+
+        DisplayAddEquation()
+        DetermineAnswers()
+        DisplayAnswers()
+
     end
 end
 
@@ -212,6 +214,8 @@ local function TouchListenerAnswer(touch)
         -- if the user gets the answer right, display Correct and call RestartSceneRight
         if (answer == tonumber(userAnswer)) then     
             correct.isVisible = true
+            -- play correct sound
+            correctSoundChannel = audio.play(correctSound)
             -- increase the number correct by 1
             numberCorrect = numberCorrect + 1
             -- call RestartScene after 1 second
@@ -231,6 +235,10 @@ local function TouchListenerWrongAnswer1(touch)
 
 
         if (answer ~= tonumber(userAnswer)) then
+            -- display Incorrect!
+            incorrect.isVisible = true
+            -- play incorrect sound
+            wrongSoundChannel = audio.play(wrongSound)
             -- decrease a life
             lives = lives - 1
             -- call RestartScene after 1 second
@@ -251,6 +259,10 @@ local function TouchListenerWrongAnswer2(touch)
 
 
             if (answer ~= tonumber(userAnswer)) then
+                -- display Incorrect!
+                incorrect.isVisible = true
+                -- play incorrect sound
+                wrongSoundChannel = audio.play(wrongSound)
                 -- decrease a life
                 lives = lives - 1
                 -- call RestartScene after 1 second
@@ -259,7 +271,7 @@ local function TouchListenerWrongAnswer2(touch)
     
         end
 end
- 
+
 local function TouchListenerWrongAnswer3(touch)
     -- get the user answer from the text object that was clicked on
     local userAnswer = wrongAnswer3TextObject.text
@@ -271,6 +283,10 @@ local function TouchListenerWrongAnswer3(touch)
 
 
             if (answer ~= tonumber(userAnswer)) then
+                -- display Incorrect!
+                incorrect.isVisible = true
+                -- play incorrect sound
+                wrongSoundChannel = audio.play(wrongSound)
                 -- decrease a life
                 lives = lives - 1
                 -- call RestartScene after 1 second
@@ -279,7 +295,7 @@ local function TouchListenerWrongAnswer3(touch)
     
         end
 end
-
+    
 -- Function that adds the touch listeners to each of the answer objects
 local function AddTextObjectListeners()
 
@@ -326,19 +342,18 @@ function scene:create( event )
     bkg.height = display.contentHeight
 
     -- create the text object that will hold the add equation. Make it empty for now.
-    addEquationTextObject = display.newText( "", display.contentWidth*1/4, display.contentHeight*2/5, nil, 50 )
+    addEquationTextObject = display.newText( "", display.contentWidth*1/4, display.contentHeight*2/5 - 25, nil, 75 )
 
     -- sets the color of the add equation text object
     addEquationTextObject:setTextColor(155/255, 42/255, 198/255)
 
     -- create the text objects that will hold the correct answer and the wrong answers
-    answerTextObject = display.newText("", display.contentWidth*.4, display.contentHeight/2, nil, 50 )
-    
-    wrongAnswer1TextObject = display.newText("", display.contentWidth*.3, display.contentHeight/2, nil, 50 )
-    wrongAnswer2TextObject = display.newText("", display.contentWidth*.2, display.contentHeight/2, nil, 50 )
-    wrongAnswer3TextObject = display.newText("", display.contentWidth*.4, display.contentHeight/2, nil, 50 )
-    
-    -- 
+    answerTextObject = display.newText("", display.contentWidth*.4, display.contentHeight/2 - 30, nil, 60 )
+    wrongAnswer1TextObject = display.newText("", display.contentWidth*.3, display.contentHeight/2, nil, 60 )
+    wrongAnswer2TextObject = display.newText("", display.contentWidth*.2, display.contentHeight/2 + 30, nil, 60 )
+    wrongAnswer3TextObject = display.newText("", display.contentWidth*.4, display.contentHeight/2 + 60, nil, 60 )
+
+    -- display the number correct
     numberCorrectText = display.newText("", display.contentWidth*4/5, display.contentHeight*6/7, nil, 25)
 
     -- create the text object that will hold the number of lives
@@ -353,6 +368,11 @@ function scene:create( event )
     correct = display.newText("Correct", display.contentWidth/2, display.contentHeight*1/3, nil, 50 )
     correct:setTextColor(100/255, 47/255, 210/255)
     correct.isVisible = false
+
+    -- create the text object that will say Incorrect, set the colour and then hide it
+    incorrect = display.newText("Incorrect!", display.contentWidth/2, display.contentHeight*1/3, nil, 50 )
+    incorrect:setTextColor(204/255, 0/255, 0/255)
+    incorrect.isVisible = false
 
     -- create the text object that will say Out of Time, set the colour and then hide it
     outOfTimeText = display.newText("Out of Time!", display.contentWidth*2/5, display.contentHeight*1/3, nil, 50)
@@ -398,6 +418,9 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
 
+        -- play background music for the level 1 screen
+        backgroundMusicChannel = audio.play(backgroundMusic, {loops = -1})
+
         -- initialize the number of lives and number correct 
         lives = 3
         numberCorrect = 0
@@ -428,6 +451,9 @@ function scene:hide( event )
         -- Called when the scene is on screen (but is about to go off screen).
         -- Insert code here to "pause" the scene.
         -- Example: stop timers, stop animation, stop audio, etc.
+
+        -- stop the background music
+        audio.stop(backgroundMusicChannel)
         
         -- remove the listeners when leaving the scene
         RemoveTextObjectListeners()
