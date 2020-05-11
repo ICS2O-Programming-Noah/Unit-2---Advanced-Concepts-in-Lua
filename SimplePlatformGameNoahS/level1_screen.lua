@@ -81,8 +81,11 @@ local theBall
 local questionsAnswered = 0
 
 -----------------------------------------------------------------------------------------
--- SOUNDS
+-- LOCAL SOUNDS
 -----------------------------------------------------------------------------------------
+
+local bkgMusicL1 = audio.loadSound("Sounds/bkgMusicL1.wav")
+local bkgMusicL1Channel
 
 local hittingSpikeSound = audio.loadSound("Sounds/Pop.mp3")
 local hittingSpikeSoundChannel
@@ -605,6 +608,9 @@ function scene:show( event )
         numLives = 3
         questionsAnswered = 0
 
+        -- play the background music
+        bkgMusicL1Channel = audio.play(bkgMusicL1, {channel = 1, loops = 1})
+
         -- make all soccer balls visible
         MakeSoccerBallsVisible()
 
@@ -643,6 +649,9 @@ function scene:hide( event )
     -----------------------------------------------------------------------------------------
 
     elseif ( phase == "did" ) then
+        -- stop the background music
+        audio.stop(bkgMusicL1Channel)
+
         -- Called immediately after scene goes off screen.
         RemoveCollisionListeners()
         RemovePhysicsBodies()

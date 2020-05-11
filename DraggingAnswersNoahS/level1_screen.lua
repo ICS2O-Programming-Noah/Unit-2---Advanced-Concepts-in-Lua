@@ -27,10 +27,10 @@ local scene = composer.newScene( sceneName )
 -- LOCAL SOUNDS
 -----------------------------------------------------------------------------------------
 
-local correctSound = audio.loadSound("Sounds/Correct.wav")
+local correctSound = audio.loadSound("Sounds/Correct.wav", {channel = 2})
 local correctSoundChannel
 
-local booSound = audio.loadSound("Sounds/boo.mp3")
+local booSound = audio.loadSound("Sounds/boo.mp3", {channel = 3})
 local booSoundChannel
 
 local bkgMusic = audio.loadSound("Sounds/level1Music.wav", {channel = 1})
@@ -251,12 +251,14 @@ end
 
 -- Function to Check User Input
 local function CheckUserAnswerInput()
+    -- if the user gets the correct answer
     if (correctAnswer == userAnswer) then
         if (numCorrect == 3) then
             YouWinTransitionLevel1()
         else
             timer.performWithDelay(1600, RestartLevel1) 
         end
+    -- otherwise the answer is wrong    
     else
         if (numWrong == 2) then
             YouLoseTransitionLevel1()
@@ -302,6 +304,9 @@ local function TouchListenerAnswerbox(touch)
                 -- increment numCorrect
                 numCorrect = numCorrect + 1
 
+                -- play correct sound effect
+                correctSoundChannel = audio.play(correctSound)
+
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
 
@@ -345,6 +350,9 @@ local function TouchListenerAnswerBox1(touch)
 
                 -- increment the number wrong
                 numWrong = numWrong + 1
+
+                -- play the incorrect sound
+                booSoundChannel = audio.play(booSound)
               
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
@@ -389,6 +397,9 @@ local function TouchListenerAnswerBox2(touch)
                 -- increment numWrong
                 numWrong = numWrong + 1
 
+                -- play the incorrect sound
+                booSoundChannel = audio.play(booSound)
+
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
 
@@ -432,6 +443,9 @@ local function TouchListenerAnswerBox3(touch)
                 -- increment numWrong
                 numWrong = numWrong + 1
 
+                -- play the incorrect sound
+                booSoundChannel = audio.play(booSound)
+
                 -- call the function to check if the user's input is correct or not
                 CheckUserAnswerInput()
 
@@ -449,7 +463,7 @@ local function AddAnswerBoxEventListeners()
     answerbox:addEventListener("touch", TouchListenerAnswerbox)
     alternateAnswerBox1:addEventListener("touch", TouchListenerAnswerBox1)
     alternateAnswerBox2:addEventListener("touch", TouchListenerAnswerBox2)
-    alternateAnswerBox2:addEventListener("touch", TouchListenerAnswerBox3)
+    alternateAnswerBox3:addEventListener("touch", TouchListenerAnswerBox3)
 end 
 
 -- Function that Removes Listeners to each answer box
@@ -457,7 +471,7 @@ local function RemoveAnswerBoxEventListeners()
     answerbox:removeEventListener("touch", TouchListenerAnswerbox)
     alternateAnswerBox1:removeEventListener("touch", TouchListenerAnswerBox1)
     alternateAnswerBox2:removeEventListener("touch", TouchListenerAnswerBox2)
-    alternateAnswerBox2:removeEventListener("touch", TouchListenerAnswerBox3)
+    alternateAnswerBox3:removeEventListener("touch", TouchListenerAnswerBox3)
 end 
 
 ----------------------------------------------------------------------------------
@@ -555,6 +569,9 @@ function scene:show( event )
         -- Called when the scene is now on screen.
         -- Insert code here to make the scene come alive.
         -- Example: start timers, begin animation, play audio, etc.
+        -- INITIALIZATIONS
+        numWrong = 0
+        numCorrect = 0
         bkgMusicChannel = audio.play(bkgMusic)
         RestartLevel1()
         AddAnswerBoxEventListeners() 
