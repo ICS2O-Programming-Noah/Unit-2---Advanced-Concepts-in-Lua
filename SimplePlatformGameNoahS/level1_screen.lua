@@ -87,7 +87,7 @@ local questionsAnswered = 0
 local bkgMusicL1 = audio.loadSound("Sounds/bkgMusicL1.wav")
 local bkgMusicL1Channel
 
-local hittingSpikeSound = audio.loadSound("Sounds/Pop.mp3")
+local hittingSpikeSound = audio.loadSound("Sounds/hitSpikes.mp3")
 local hittingSpikeSoundChannel
 
 -----------------------------------------------------------------------------------------

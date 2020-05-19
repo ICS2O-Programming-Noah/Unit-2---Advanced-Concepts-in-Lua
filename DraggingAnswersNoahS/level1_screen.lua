@@ -524,10 +524,10 @@ function scene:create( event )
     alternateAnswerBox3 = display.newText("", display.contentWidth * 0.9, 0, nil, 100)
 
     -- set the x positions of each of the answer boxes
-    answerboxPreviousX = display.contentWidth * 0.9
-    alternateAnswerBox1PreviousX = display.contentWidth * 0.9
-    alternateAnswerBox2PreviousX = display.contentWidth * 0.9
-    alternateAnswerBox3PreviousX = display.contentWidth * 0.9
+    answerboxPreviousX = display.contentWidth * 0.6
+    alternateAnswerBox1PreviousX = display.contentWidth * 0.6
+    alternateAnswerBox2PreviousX = display.contentWidth * 0.6
+    alternateAnswerBox3PreviousX = display.contentWidth * 0.6
 
     -- the black box where the user will drag the answer
     userAnswerBoxPlaceholder = display.newImageRect("Images/userAnswerBoxPlaceholder.png",  130, 130, 0, 0)

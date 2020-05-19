@@ -63,6 +63,15 @@ local userAnswer
 local textTouched = false
 
 -----------------------------------------------------------------------------------------
+-- LOCAL SOUNDS
+-----------------------------------------------------------------------------------------
+
+local correctSound = audio.loadSound("Sounds/correctSound.wav")
+local correctSoundChannel
+
+local incorrectSound = audio.loadSound("Sounds/incorrectSound.mp3")
+local incorrectSoundChanel
+-----------------------------------------------------------------------------------------
 --LOCAL FUNCTIONS
 -----------------------------------------------------------------------------------------
 
@@ -79,7 +88,7 @@ local function TouchListenerAnswer(touch)
     userAnswer = answerText.text
     
     if (touch.phase == "ended") then
-
+        correctSoundChannel = audio.play(correctSound)
         BackToLevel1( )
     
     end 
@@ -90,7 +99,7 @@ local function TouchListenerWrongAnswer(touch)
     userAnswer = wrongText1.text
     
     if (touch.phase == "ended") then
-        
+        incorrectSoundChanel = audio.play(incorrectSound)
         BackToLevel1( )
         
         
@@ -102,7 +111,7 @@ local function TouchListenerWrongAnswer2(touch)
     userAnswer = wrongText2.text
     
     if (touch.phase == "ended") then
-
+        incorrectSoundChanel = audio.play(incorrectSound)
         BackToLevel1( )
         
     end 
@@ -113,7 +122,7 @@ local function TouchListenerWrongAnswer3(touch)
     userAnswer = wrongText3.text
     
     if (touch.phase == "ended") then
-
+        incorrectSoundChanel = audio.play(incorrectSound)
         BackToLevel1( )
         
     end 
