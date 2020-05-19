@@ -30,6 +30,12 @@ sceneName = "level1_screen"
 local scene = composer.newScene( sceneName )
 
 -----------------------------------------------------------------------------------------
+-- GLOBAL VARIABLES
+-----------------------------------------------------------------------------------------
+
+soundOn = true
+
+-----------------------------------------------------------------------------------------
 -- LOCAL VARIABLES
 -----------------------------------------------------------------------------------------
 
@@ -79,6 +85,9 @@ local ball3
 local theBall
 
 local questionsAnswered = 0
+
+local muteButton
+local unmuteButton
 
 -----------------------------------------------------------------------------------------
 -- LOCAL SOUNDS
@@ -148,6 +157,45 @@ local function RemoveRuntimeListeners()
     Runtime:removeEventListener("touch", stop )
 end
 
+local function Mute (touch)
+
+    if (touch.phase == "ended") then
+
+        -- pause all Sounds
+        audio.pause(bgSoundL1Channel)
+
+        -- make soundOn false
+        soundOn = false
+
+        -- make mute button visible
+        muteButton.isVisible = true
+        unmuteButton.isVisible = false
+    end
+end
+
+local function UnMute (touch)
+    if (touch.phase == "ended") then
+        --resume all Sounds
+        audio.resume(bkgMusicL1Channel)
+
+        -- make soundOn true
+        soundOn = true
+
+        -- make unmute button visible
+        muteButton.isVisible = false
+        unmuteButton.isVisible = true
+    end
+end
+
+local function AddMuteUnMuteListeners()
+    unmuteButton:addEventListener("touch", UnMute)
+    muteButton:addEventListener("touch", Mute)
+end
+
+local function RemoveMuteUnMuteListeners()
+    unmuteButton:removeEventListener("touch", UnMute)
+    muteButton:removeEventListener("touch", Mute)
+end
 
 local function ReplaceCharacter()
     character = display.newImageRect("Images/KickyKatRight.png", 100, 150)
@@ -205,8 +253,10 @@ local function onCollision( self, event )
             (event.target.myName == "spikes2") or
             (event.target.myName == "spikes3") then
 
-            -- add sound effect here
-            hittingSpikeSoundChannel = audio.play(hittingSpikeSound)
+            if (soundOn == true) then    
+                -- add sound effect here
+                hittingSpikeSoundChannel = audio.play(hittingSpikeSound)
+            end
 
             -- remove runtime listeners that move the character
             RemoveArrowEventListeners()
@@ -576,6 +626,23 @@ function scene:create( event )
     -- Insert objects into the scene group in order to ONLY be associated with this scene
     sceneGroup:insert( ball3 )
 
+    -- mute button
+    muteButton = display.newImageRect("Images/mute.png", 70, 70)
+    muteButton.x = 950
+    muteButton.y = 60
+    muteButton.isVisible = false
+
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( muteButton )
+    -- unmute button
+    unmuteButton = display.newImageRect("Images/unmute.png", 70, 70)
+    unmuteButton.x = 950
+    unmuteButton.y = 60
+    unmuteButton.isVisible = true
+
+    -- Insert objects into the scene group in order to ONLY be associated with this scene
+    sceneGroup:insert( unmuteButton )
+
 end --function scene:create( event )
 
 -----------------------------------------------------------------------------------------
@@ -608,8 +675,17 @@ function scene:show( event )
         numLives = 3
         questionsAnswered = 0
 
-        -- play the background music
-        bkgMusicL1Channel = audio.play(bkgMusicL1, {channel = 1, loops = 1})
+        if (soundOn == true) then
+            -- play the background music
+            bkgMusicL1Channel = audio.play(bkgMusicL1, {channel = 1, loops = 1})
+            muteButton.isVisible = false
+            unmuteButton.isVisible = true
+        else
+            -- pause the background music
+            audio.pause(bkgMusicL1Channel)
+            muteButton.isVisible = true
+            unmuteButton.isVisible = false
+        end
 
         -- make all soccer balls visible
         MakeSoccerBallsVisible()
@@ -626,6 +702,8 @@ function scene:show( event )
         -- create the character, add physics bodies and runtime listeners
         ReplaceCharacter()
 
+        -- add the mute and unmute functionality to the buttons
+        AddMuteUnMuteListeners()
     end
 
 end --function scene:show( event )
@@ -659,6 +737,7 @@ function scene:hide( event )
         physics.stop()
         RemoveArrowEventListeners()
         RemoveRuntimeListeners()
+        RemoveMuteUnMuteListeners()
         display.remove(character)
     end
 
