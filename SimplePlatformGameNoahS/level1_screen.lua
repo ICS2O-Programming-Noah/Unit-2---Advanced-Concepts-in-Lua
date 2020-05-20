@@ -188,13 +188,13 @@ local function UnMute (touch)
 end
 
 local function AddMuteUnMuteListeners()
-    unmuteButton:addEventListener("touch", UnMute)
-    muteButton:addEventListener("touch", Mute)
+    unmuteButton:addEventListener("touch", Mute)
+    muteButton:addEventListener("touch", UnMute)
 end
 
 local function RemoveMuteUnMuteListeners()
-    unmuteButton:removeEventListener("touch", UnMute)
-    muteButton:removeEventListener("touch", Mute)
+    unmuteButton:removeEventListener("touch", Mute)
+    muteButton:removeEventListener("touch", UnMute)
 end
 
 local function ReplaceCharacter()
