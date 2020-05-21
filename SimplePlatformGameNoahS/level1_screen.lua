@@ -677,12 +677,14 @@ function scene:show( event )
 
         if (soundOn == true) then
             -- play the background music
-            bkgMusicL1Channel = audio.play(bkgMusicL1, {channel = 1, loops = 1})
+            bkgMusicL1Channel = audio.play(bkgMusicL1, {channel = 1, loops = -1})
             muteButton.isVisible = false
             unmuteButton.isVisible = true
         else
             -- pause the background music
             audio.pause(bkgMusicL1Channel)
+            audio.pause(correctSoundChannel)
+            audio.pause(incorrectSoundChannel)
             muteButton.isVisible = true
             unmuteButton.isVisible = false
         end
