@@ -40,7 +40,7 @@ local bkg
 -- SOUNDS
 -----------------------------------------------------------------------------------------
 
--- add lose sound effect
+-- add win sound effect
 local winSound = audio.loadSound("Sounds/Cheer.m4a")
 local winSoundChannel
 
